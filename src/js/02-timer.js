@@ -49,7 +49,7 @@ flatpickr(datePick, {
       const selectedDate = selectedDates[0];
   
       if (selectedDate.getTime() < Date.now()) {
-        Notiflix.Notify.failure("Please choose a date in the future");
+        window.alert("Please choose a date in the future");
         startBtn.disabled = true;
       } else {
         startBtn.disabled = false;
