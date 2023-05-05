@@ -1,11 +1,10 @@
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
-import { Notify } from 'notiflix/build/notiflix-notify-aio'
-import "notiflix/dist/notiflix-aio-3.2.6.min.js"
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from 'notiflix';
+
 
 const datePick = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('[data-start]');
-
 const daysValue = document.querySelector('[data-days]');
 const hoursValue = document.querySelector('[data-hours]');
 const minutesValue = document.querySelector('[data-minutes]');
@@ -15,20 +14,21 @@ let countdown;
 
 const Countdown = (endDate) => {
  clearInterval(countdown);
-
+ startBtn.disabled = true;
  countdown = setInterval(() => {
     const now = new Date().getTime();
     const distance = endDate - now;
-
+    datePick.disabled = true;
     if (distance < 0) {
+      startBtn.disabled = false;
+      datePick.disabled = false;
         clearInterval(countdown);
         Notiflix.Notify.failure("Please , choose a date in the future!");
         return;
     }
     
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor( (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
+    const hours = Math.floor( (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) );
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -36,6 +36,7 @@ daysValue.textContent = addLeadingZero(days);
 hoursValue.textContent = addLeadingZero(hours);
 minutesValue.textContent = addLeadingZero(minutes);
 secondValue.textContent = addLeadingZero(seconds);
+ 
 }, 1000);
 };
 
@@ -47,9 +48,8 @@ flatpickr(datePick, {
     minuteIncrement: 1,
     onClose(selectedDates) {
       const selectedDate = selectedDates[0];
-  
       if (selectedDate.getTime() < Date.now()) {
-        window.alert("Please choose a date in the future");
+        Notiflix.Notify.failure("Please choose a date in the future");
         startBtn.disabled = true;
       } else {
         startBtn.disabled = false;
@@ -76,7 +76,11 @@ flatpickr(datePick, {
     return { days, hours, minutes, seconds };
     
   }
+  
+  console.log(convertMs(2000)); 
+  console.log(convertMs(140000)); 
+  console.log(convertMs(24140000));
 
   function addLeadingZero(value) {
     return value.toString().padStart(2, '0');
-  } 
+  }
